@@ -1,12 +1,13 @@
 const AWS = require("aws-sdk");
 const uuid = require("uuid/v1");
-const docClient = new AWS.DynamoDB.DocumentClient();
-const table = "items";
+const table = process.env.AWS_DDB_TABLE;
+AWS.config.update({
+  region: process.env.AWS_REGION,
+  endpoint: process.env.AWS_DDB, //"http://localhost:8000",
+  version: "2012-08-10"
+});
 
-// for running it locally
-exports.config = config => {
-  AWS.config.update(config);
-};
+const DB = new AWS.DynamoDB();
 
 exports.handler = async event => {
   const item = {
@@ -22,9 +23,9 @@ exports.handler = async event => {
     TableName: table,
     Item: item
   };
+
   try {
-    const result = await docClient.put(params).promise();
-    console.log("saved", result);
+    const result = await DB.putItem(params).promise();
     return item;
   } catch (err) {
     return err;
