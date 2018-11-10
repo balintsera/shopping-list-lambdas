@@ -7,7 +7,7 @@ AWS.config.update({
   version: "2012-08-10"
 });
 
-const DB = new AWS.DynamoDB();
+var docClient = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async event => {
   const item = {
@@ -25,7 +25,7 @@ exports.handler = async event => {
   };
 
   try {
-    const result = await DB.putItem(params).promise();
+    const result = await docClient.put(params).promise();
     return item;
   } catch (err) {
     return err;
